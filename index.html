@@ -7,28 +7,34 @@
   <meta name="robots" content="noindex,nofollow">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Revenue Engine · Autorização Mercado Livre</title>
-  <link rel="stylesheet" href="style.css">
-  <script defer src="callback.js"></script>
+  <link rel="stylesheet" href="style.css?v=2">
+  <script defer src="return-plan.js?v=2"></script>
+  <script defer src="callback.js?v=2"></script>
 </head>
 <body>
   <main>
     <div class="identity"><span class="mark" aria-hidden="true">RE</span><span>Revenue Engine<span class="subtitle">Conexão da loja</span></span></div>
     <div class="status" id="badge">Mercado Livre</div>
     <h1 id="title">Pronto para receber a autorização.</h1>
-    <p id="message" role="status" aria-live="polite">Inicie a conexão no terminal do projeto e autorize sua conta no Mercado Livre.</p>
+    <p id="message" role="status" aria-live="polite">Inicie auth-connect no programa local e autorize sua conta no Mercado Livre. A conexão será concluída automaticamente.</p>
     <section id="received" hidden>
       <label for="return-url">Retorno da autorização</label>
       <textarea id="return-url" readonly rows="4" spellcheck="false" autocomplete="off"></textarea>
       <button id="copy" type="button">Copiar retorno</button>
       <p class="hint" id="copy-status" role="status" aria-live="polite">Cole o retorno somente no terminal local.</p>
     </section>
-    <ol>
+    <ol id="automatic-steps">
+      <li><span>1</span><div>Inicie <code>python3 apps/dropship-local/main.py auth-connect</code> no projeto.</div></li>
+      <li><span>2</span><div>Faça login e autorize a conexão no Mercado Livre.</div></li>
+      <li><span>3</span><div>Aguarde a confirmação automática e volte ao programa.</div></li>
+    </ol>
+    <ol id="manual-steps" hidden>
       <li><span>1</span><div>Abra o terminal na pasta do projeto.</div></li>
       <li><span>2</span><div>Execute <code>python3 apps/dropship-local/main.py auth-finish</code> e cole o retorno no campo oculto.</div></li>
       <li><span>3</span><div>Confirme a conta com <code>python3 apps/dropship-local/main.py auth-check</code>.</div></li>
     </ol>
-    <p class="footer">Esta página não solicita senha, não recebe tokens de acesso e não conclui a conexão sozinha. O retorno é processado pelo programa na sua máquina.</p>
-    <noscript>Ative JavaScript para copiar o retorno da autorização nesta página.</noscript>
+    <p class="footer">A autorização é processada na sua máquina. Senhas ficam no Mercado Livre; tokens e a chave PKCE permanecem no programa local.</p>
+    <noscript>Ative JavaScript para concluir o retorno da autorização.</noscript>
   </main>
 </body>
 </html>

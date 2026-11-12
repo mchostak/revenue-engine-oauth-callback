@@ -6,18 +6,33 @@
   const states = original.searchParams.getAll("state");
   const errors = original.searchParams.getAll("error");
   const hasReturn = codes.length || states.length || errors.length;
-  if (!hasReturn) return;
+  if (!hasReturn && !original.hash) return;
 
   // Clear credentials from the visible URL before any subsequent navigation.
-  // No requests, third-party scripts, analytics or browser storage are used.
+  // No third-party scripts, analytics or browser storage are used.
   const safeURL = original.origin + original.pathname;
   window.history.replaceState(null, "", safeURL);
   const title = document.getElementById("title");
   const message = document.getElementById("message");
   const badge = document.getElementById("badge");
+  const plan = window.RevenueOAuthReturn.planReturn(original.href);
+  if (plan.kind === "automatic") {
+    title.textContent = "Concluindo a conexão na sua máquina…";
+    message.textContent = "O programa local receberá a autorização automaticamente. Mantenha-o aberto até a confirmação.";
+    badge.textContent = "Conexão automática";
+    // Fixed loopback target: the query cannot choose a host or port.
+    window.location.replace(plan.target);
+    return;
+  }
+  if (plan.kind === "invalid") {
+    title.textContent = "O retorno está incompleto.";
+    message.textContent = "Volte ao programa e execute auth-connect para iniciar uma nova conexão.";
+    badge.textContent = "Retorno inválido";
+    return;
+  }
   if (errors.length) {
     title.textContent = "A autorização não foi concluída.";
-    message.textContent = "Volte ao terminal, execute auth-start novamente e confira as permissões da sua aplicação.";
+    message.textContent = "Volte ao programa, execute auth-connect novamente e confira as permissões da sua aplicação.";
     badge.textContent = "Nova tentativa necessária";
     return;
   }
@@ -27,7 +42,9 @@
     badge.textContent = "Retorno inválido";
     return;
   }
-  title.textContent = "Autorização recebida.";
+  document.getElementById("automatic-steps").hidden = true;
+  document.getElementById("manual-steps").hidden = false;
+  title.textContent = "Autorização recebida no modo manual.";
   message.textContent = "Falta um passo: leve este retorno ao terminal para concluir a conexão na sua máquina.";
   badge.textContent = "Continue no terminal";
   const section = document.getElementById("received");
